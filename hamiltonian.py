@@ -42,25 +42,32 @@ constructBlock(maxJumpableDistance):
     magnitude = maxJumpableDistance \for right now it will be fixed as the max
     return (theta,magnitude)
 
-# blockIsIn(blocks,checkedBlock,x,y):
-#     for block in blocks
-#         if blocks have any common area with 
-    
+blockIsIn(blocks,checkedBlock):
+    for block in blocks
+        if checkedBlock shares points from 
+            (block.cx-platformWidth/2,block.cy-platformHeight/2,
+            block.cx+platformWidth/2,block.cy+platformHeight/2)
+                return True
+    return False
+
 isJumpable(block1,block2):
     mx + b = construct line between centers
     for newX in range(block1.cx,block2.cx) \centers of blocks
         if blockIsIn(blocks,newX,m(newX)+b): \have to do an exhaustive check bc of the platform size
             return False
+    return True
 
 
-                 
-    
+maxJumpDist = ...
 
-        
-
-if 
 while not isHamiltonian(G):
+    curBlock = random.choice(blocks) \find a non-naive implementation to choose a block
+    newBlock = constructBlock(maxJumpDist)
+    if newBlockNode not in G[curBlockNode] and isJumpable(curBlock,newBlock):
+        block.append(newBlock)
+        G[curBlockNode].add(newBlockNode)
 
-
+\possible no exit condition
+\maybe cache possible graph if it takes too long 
 
 """
