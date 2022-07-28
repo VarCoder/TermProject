@@ -10,12 +10,13 @@ https://www.angelfire.com/space2/m_kaykobad/publications/Ham_path.pdf
     If for all pairwise nonadjacent vertex-triples u, v, and w it holds that 
     d(u) + d(v) + d(w) >= 1/2(3n-5)        | d(x) denotes the degree of a node x
     then G has a Hamiltonian path.
+
 Pseudocode:
 
 numpoints = n
 curPoints = 0
-blocks = []
-G = [] --> Graph of len(n)
+blocks = [] \make the blocks a class
+G = [] --> Graph with n vertices \make the graphs a class
 
 isHamiltonian(G):
     Check if connected by bfs --- cache if it's connected (O(N))
@@ -33,7 +34,7 @@ constructBlock(maxJumpableDistance):
     \ dont generate blocks (close to) directly above,below,left or right
     \ potentially fix magnitude to make the jumps harder constantly?
     
-    c1 = random.randrange(1,80)
+    c1 = random.randrange(10,80)
     c2 = random.randrange(100,170)
     c3 = random.randrange(190,260)
     c4 = random.randrange(280,350)
@@ -41,17 +42,23 @@ constructBlock(maxJumpableDistance):
     magnitude = maxJumpableDistance \for right now it will be fixed as the max
     return (theta,magnitude)
 
-inLineOfSight(block1,block2):
+# blockIsIn(blocks,checkedBlock,x,y):
+#     for block in blocks
+#         if blocks have any common area with 
+    
+isJumpable(block1,block2):
     mx + b = construct line between centers
-    for point in range(block1.x,block2.x) \centers of blocks
-        
-notInAnyLineOfSight(mainBlock):
-    res = []
-    for block in blocks
-        if inLineOfSight(block,mainBlock):
-            res.append(block)
-    return block
+    for newX in range(block1.cx,block2.cx) \centers of blocks
+        if blockIsIn(blocks,newX,m(newX)+b): \have to do an exhaustive check bc of the platform size
+            return False
 
+
+                 
+    
+
+        
+
+if 
 while not isHamiltonian(G):
 
 
