@@ -19,8 +19,6 @@ try to expand these paths to actually make a grid
 
 """
 import random
-
-
 # class Node(object):
 #     idToInstance = dict() #id -> 
 #     def __init__(self,id):
@@ -70,12 +68,13 @@ class Node(object):
         return isinstance(other,Node) and self.ident==other.ident
     def __hash__(self):
         return hash(self.ident)
+
 class Graph(object):
     def __init__(self,nodeCount):
         self.n = nodeCount
         self.nodes = [Node(i) for i in range(self.n)]
         self.adjList = [set() for tmp in range(self.n)]
-
+#sdasdadasd
     def idToNode(self,id):
         return self.nodes[id]
     def initEdges(self):
