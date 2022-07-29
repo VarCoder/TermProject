@@ -21,9 +21,9 @@ try to expand these paths to actually make a grid
 class Graph(object):
     def __init__(self,nodes):
         self.nodes = nodes
-        self.adj_list = [{} for node in range(nodes+1)]
+        self.adj_list = [{} for node in range(self.nodes+1)]
     def initEdges(self):
-        for i in range(1,nodes+1):
+        for i in range(1,self.nodes+1):
             self.adj_list[i].add(i-1)
         print(self.adj_list)
 
