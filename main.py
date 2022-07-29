@@ -1,6 +1,5 @@
-from cmu_112_graphics import *
-from hamiltonian import *
-
+# from cmu_112_graphics import *
+import planar
 if __name__ == "__main__":
     """Goals:
     perspective camera

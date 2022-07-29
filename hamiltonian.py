@@ -11,29 +11,34 @@ https://www.angelfire.com/space2/m_kaykobad/publications/Ham_path.pdf
     d(u) + d(v) + d(w) >= 1/2(3n-5)        | d(x) denotes the degree of a node x
     then G has a Hamiltonian path.
 
+    If G is a simple graph (no repeated edges or self-edges) on n vertices and d(u)+d(v)≥n-1 
+    whenever u and v are not adjacent, then G has a Hamilton path. 
 Pseudocode:
 
 numpoints = n
 curPoints = 0
 blocks = [] \make the blocks a class
 G = [] --> Graph with n vertices \make the graphs a class
+block class:
+    possess x and y coords
+    know block it was derived from
+    know the theta and mag of the transformation
 
 isHamiltonian(G):
-    Check if connected by bfs --- cache if it's connected (O(N))
+    Brute force and dfs from every node to see if its hamiltonian O(N*(M+N))
 
     for u in G
         for v in G
-            for w in G
-                (O(N^3))
-                if nonadjacent(u,v,w): #possibly O(1) but probably O(N)
-                    if d(u) + d(v) + d(w) < 1/2(3n-5): (negation of requirement)
+            (O(N^2))
+            if nonadjacent(u,v): #possibly O(1) but probably O(N)
+                if d(u) + d(v) < n-1: (negation of requirement)
                         return False
     return True
 
 constructBlock(maxJumpableDistance):
     \ dont generate blocks (close to) directly above,below,left or right
     \ potentially fix magnitude to make the jumps harder constantly?
-    
+    \ possibly pass an edge through make a block
     c1 = random.randrange(10,80)
     c2 = random.randrange(100,170)
     c3 = random.randrange(190,260)
@@ -49,13 +54,6 @@ blockIsIn(blocks,checkedBlock):
             block.cx+platformWidth/2,block.cy+platformHeight/2)
                 return True
     return False
-
-isJumpable(block1,block2):
-    mx + b = construct line between centers
-    for newX in range(block1.cx,block2.cx) \centers of blocks
-        if blockIsIn(blocks,newX,m(newX)+b): \have to do an exhaustive check bc of the platform size
-            return False
-    return True
 
 
 maxJumpDist = ...
