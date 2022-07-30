@@ -1,5 +1,7 @@
 # from cmu_112_graphics import *
 from graph import *
+from randomPoints import *
+
 if __name__ == "__main__":
     """Goals:
     perspective camera

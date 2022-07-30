@@ -69,3 +69,48 @@ while not isHamiltonian(G):
 \maybe cache possible graph if it takes too long 
 
 """
+# class Node(object):
+#     idToInstance = dict() #id -> 
+#     def __init__(self,id):
+#         self.id= id
+#         if id not in Node.idToInstance:
+#             self.x = None
+#             self.y = None
+#             Node.idToInstance[id] = self
+#         else:
+#             raise Exception("Node with id {id} already exists")
+        
+#     def assignXY(self,x_val,y_val):
+#         self.x = x_val
+#         self.y = y_val
+#     def __repr__(self):
+#         return str(self.num)
+#     def __hash__(self):
+#         return hash(self.num)
+#     def __eq__(self,other):
+#         return self.num == other.num
+
+# class Graph(object):
+#     def __init__(self, nodes):
+#         self.nodeCount = len(nodes)
+#         self.adjList = { n: set() for n in nodes }
+#     def initEdges(self):
+#         for key, value in self.adjList:
+#             value.add(Node(key.displayId + 1))
+#     def addEdge(self,source,dest):
+#         #destructivly modify adj_list so just return None
+#         if dest==source: return None
+#         #undirected graph so add both ways
+#         self.adjList[source].add(dest)
+#         self.adjList[dest].add(source)
+#     def getNodeAdjList(self,node):
+#         return self.adjList[node]
+#     def getAdjList(self):
+#         return self.adjList
+# def createRandomEdges(maxOutdegree):
+#     #choose gap greater than 1
+#     for node in range(numNodes):
+#         newNodes = random.randrange(1,maxOutdegree)
+#         while len(G.getNodeAdjList(node)) <= newNodes:
+#             shift = random.randrange(-node,numNodes-node+1)
+#             G.addEdge(node,shift+node)
