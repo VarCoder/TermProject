@@ -1,5 +1,5 @@
 # from cmu_112_graphics import *
-from planar import *
+from graph import *
 if __name__ == "__main__":
     """Goals:
     perspective camera
