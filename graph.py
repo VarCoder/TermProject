@@ -67,9 +67,9 @@ numNodes = 10
 G = Graph(numNodes)
 G.initEdges()
 G.addEdge(1,5)
-G.createRandomEdges(numNodes/2)
+G.createRandomEdges(numNodes//4)
 
-# print(G)
+print(G)
 """Brainstorm:
 How should edges be randomly created?
 More is better than less
