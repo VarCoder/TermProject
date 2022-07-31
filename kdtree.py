@@ -15,40 +15,89 @@ function kdtree (list of points pointList, int depth)
     return node;
 }
 """
+import random
 
+from numpy import insert
 
-# def drawNode(node):
-
+def printTree(node):
+    if node != None and node.value != None:
+        printTree(node.leftChild)
+        print(' ' * 4 * node.depth + '-> ' + str(node))
+        printTree(node.rightChild)
+        
 class kdTreeNode(object):
-    def __init__(self,loc, lc = None, rc = None):
-        self.location = loc
+    def __init__(self,val,depth,lc = None, rc = None):
+        self.value = val
         self.leftChild = lc
         self.rightChild = rc
+        self.depth = depth
     def __repr__(self):
-        return f"\t{self.location}\n\t{self.leftChild},{self.rightChild}"
-def buildkdTree(pointListX,pointListY,depth=0):
-    
-    if len(pointListX) == 0 or len(pointListY)==0:
-        return None
-    dim = 2 #our working dimension is fixed
+        return f"{self.value}"
+def buildkdTree(pointList,depth=0,dim=2):
+    #! made from psuedocode at start of file
+    if len(pointList) == 0:
+        return kdTreeNode(None,depth)
     axis = depth%dim #axis is 0 or 1 (x,y respectively)
-    if axis == 0:
-        medianIndex = len(pointListX)//2
-        median = pointListX[medianIndex]
-    else:
-        medianIndex = len(pointListY)//2
-        median = pointListY[medianIndex]
-    
-    return kdTreeNode(median,
-        buildkdTree(pointListX[:medianIndex],pointListY[:medianIndex],depth+1),
-        buildkdTree(pointListX[medianIndex+1:],pointListY[medianIndex+1:],depth+1)
+
+    pointList.sort(key = lambda i : i[axis])
+    medianIndex = len(pointList)//2
+    median = pointList[medianIndex]
+    # print(pointList)
+    return kdTreeNode(median,depth,
+        buildkdTree(pointList[:medianIndex],depth+1),
+        buildkdTree(pointList[medianIndex+1:],depth+1)
     )
+def insertNode(tree,point,depth=0):
+    #! based off https://www.cs.cmu.edu/~ckingsf/bioinfo-lectures/kdtrees.pdf
+    # printTree(tree)
+    cd = depth%2
+    if tree == None:
+        tree = kdTreeNode(point,depth)
+    elif tree.value == None:
+        tree = kdTreeNode(point,tree.depth)
+    elif tree.value == point:
+        raise Exception("Attempted to insert duplicate node")
+    elif point[cd] < tree.value[cd]:
+        tree.leftChild = insertNode(tree.leftChild,point,depth+1)
+    else:
+        tree.rightChild = insertNode(tree.rightChild,point,depth+1)
+    return tree
+def dist(point1,point2):
+    x1 = point1.value[0] 
+    x2 = point2.value[0]
+    y1 = point1.value[1]
+    y2 = point2.value[1]
+    return ((x2-x1)**2 + (y2-y1)**2)**0.5
 
+res=kdTreeNode(None,0)
+pointDist=0
+def nearestNeighborSearch(tree,node):
+    #! info gathered from https://www.cs.cmu.edu/~ckingsf/bioinfo-lectures/kdtrees.pdf
+    #! https://johnlekberg.com/blog/2020-04-17-kd-tree.html
+    global res,pointDist
+    if tree == None or tree.value == None:
+        return None
+    
+    hypot = dist(tree,node)
+    if not pointDist or hypot < pointDist:
+        res = kdTreeNode(tree.value,tree.depth)
+        pointDist=hypot
+        
+    axis = tree.depth%2
+    closeEnough = (node.value[axis] - tree.value[axis])**2<=pointDist
+    if node.value[axis] - tree.value[axis] <= 0:
+        nearestNeighborSearch(tree.leftChild,node)
+        if closeEnough: nearestNeighborSearch(tree.rightChild,node)
+    else:
+        nearestNeighborSearch(tree.rightChild,node)
+        if closeEnough: nearestNeighborSearch(tree.leftChild,node)
+def nearestNeighbor(tree,node):
+    global res, pointDist
+    res=kdTreeNode(None,0)
+    pointDist=0
+    kdnode = kdTreeNode(node,0)
+    nearestNeighborSearch(tree,kdnode)
+    return res, pointDist
 def kdTree(pointList):
-    sortedPointListX = sorted(pointList,key=lambda x : x[0])
-    sortedPointListY = sorted(pointList,key=lambda x : x[1])
-    return buildkdTree(sortedPointListX,sortedPointListY)
+    return buildkdTree(pointList)
     #? pointList is in the form [(x1,y1),(x2,y2)...(x_n,y_n)]
-
-x = kdTree([(1,2),(2,3)])
-print(x)

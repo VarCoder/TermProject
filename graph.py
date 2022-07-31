@@ -63,13 +63,7 @@ class Graph(object):
             for item in self.adjList[n]:
                 res += f"{n} {item}\n"
         return res
-numNodes = 10
-G = Graph(numNodes)
-G.initEdges()
-G.addEdge(1,5)
-G.createRandomEdges(numNodes//4)
 
-print(G)
 """Brainstorm:
 How should edges be randomly created?
 More is better than less
