@@ -21,12 +21,13 @@ if __name__ == "__main__":
     numNodes = 10
     G = Graph(numNodes)
     G.initEdges()
-    G.createRandomEdges(numNodes//4)
+    G.createRandomEdges(4)
   
     pointList = genXYCoords((100,200),numNodes,(width,height))
-
+    # pointList.sort(key=lambda x : x[1])
     nodeList = list(range(numNodes))
-    random.shuffle(nodeList)
+    # random.shuffle(nodeList)
+    # maybe use a monte carlo algorithm to get the best permutation of nodes for the game
     print(pointList,nodeList)
     #pointlist and nodeList are parallel
 
@@ -34,7 +35,17 @@ if __name__ == "__main__":
     x,y = data.T
     plt.scatter(x,y)
     for i,txt in enumerate(nodeList):
+        # x1 = pointList[i]
+        # for edge in G.adjList[i]:
+        for edge in G.adjList[i]:
+            x1 = pointList[i]
+            x2 = pointList[edge.ident]
+            # print(x1,x2)
+            plt.axline(x1,x2,marker="o")
+        # print(pointList[i])
+        # plt.plot()
         plt.annotate(txt,pointList[i])
+        plt.xlim(0,400), plt.ylim(0,400)
     plt.show()
 
     # printTree(x)
