@@ -1,5 +1,4 @@
 # from cmu_112_graphics import *
-import enum
 from graph import *
 from kdtree import *
 from randomPoints import *
@@ -28,7 +27,7 @@ if __name__ == "__main__":
     nodeList = list(range(numNodes))
     # random.shuffle(nodeList)
     # maybe use a monte carlo algorithm to get the best permutation of nodes for the game
-    print(pointList,nodeList)
+    # print(pointList,nodeList)
     #pointlist and nodeList are parallel
 
     data = np.array(pointList)
@@ -41,12 +40,12 @@ if __name__ == "__main__":
             x1 = pointList[i]
             x2 = pointList[edge.ident]
             # print(x1,x2)
-            plt.axline(x1,x2,marker="o")
+            plt.plot(x1,x2,marker="o")
         # print(pointList[i])
         # plt.plot()
         plt.annotate(txt,pointList[i])
         plt.xlim(0,400), plt.ylim(0,400)
     plt.show()
 
-    # printTree(x)
+    
     # runApp()

@@ -19,23 +19,23 @@ def genXYCoords(minMaxDist,numPoints,canvasBounds):
     
     startnode = randomPoint(canvasBounds)
     res = [startnode]
-    tree = kdTree(res)
+    pointTree = kdTree(res)
     counter = 0
     while len(res) < numPoints:
         if counter > 1000:
             res = [startnode]
-            tree = kdTree(res)
+            pointTree.reset(res) #soft reset
             counter = 0
         candidate = randomPoint(canvasBounds)
         if candidate in res:
             continue
         
-        node, dist = nearestNeighbor(tree,candidate)
+        node, dist = pointTree.findNeighbor(candidate)
         # print(dist)
         if minMaxDist[0] <= dist <= minMaxDist[1]:
             res.append(candidate)
-            tree = insertNode(tree,candidate)
+            pointTree.insertNode(candidate)
         counter += 1
-    # printTree(tree)
+    printTree(pointTree.tree)
     return res
 
