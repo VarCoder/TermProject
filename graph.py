@@ -60,21 +60,6 @@ class Graph(object):
                                 self.n - mainNode.ident)
 
                 self.addEdge(mainNode.ident,otherNode)
-    # def removeEdge(self,node1,node2):
-    #     self.adjList[node1.ident].remove(node2)
-    #     self.adjList[node2.ident].remove(node1)
-    # def removeNonHamiltonian(self):
-    #     for mainNode in self.nodes:
-    #         edges = self.adjList[mainNode.ident]
-    #         edgeCount = len(edges)
-    #         removedEdges = random.randrange(edgeCount-1)
-    #         while removedEdges>0:
-    #             otherEdge = random.sample(tuple(edges),1)[0]
-    #             if otherEdge==mainNode.ident+1:
-    #                 break
-    #             else:
-    #                 self.removeEdge(mainNode,self.nodes[otherEdge])
-
     def __repr__(self,ind=0):
         res = ""
         for n in range(ind,len(self.adjList)+ind):

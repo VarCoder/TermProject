@@ -54,24 +54,24 @@ def BowyerWatson(pointList):
     #https://stackoverflow.com/questions/58116412/a-bowyer-watson-delaunay-triangulation-i-implemented-doesnt-remove-the-triangle
     #https://github.com/bl4ckb0ne/delaunay-triangulation/blob/master/dt/delaunay.cpp
     triangulation = set() #list of triangle objects
-    # minX = min(pointList,key= lambda x : x[0])[0]
-    # maxX = max(pointList,key= lambda x : x[0])[0]
-    # minY = min(pointList,key= lambda x : x[1])
-    # maxY = max(pointList,key= lambda x : x[1])
+
     minX = min(x[0] for x in pointList)
     maxX = max(x[0] for x in pointList)
     minY = min(x[1] for x in pointList)
     maxY = max(x[1] for x in pointList)
+
     dx = maxX-minX
     dy = maxY-minY
     maxDiff = max(dx,dy)
     avgX = (minX+maxX)/2
     avgY = (minY+maxY)/2
+
     superTriangle = Triangle(
         (avgX - 20 * maxDiff,avgY-maxDiff),
         (avgX,avgY + 20 * maxDiff),
         (avgX + 20 * maxDiff, avgY - maxDiff)
     )
+
     triangulation.add(superTriangle)
     for point in pointList:
         badTriangles = set()
@@ -89,8 +89,9 @@ def BowyerWatson(pointList):
         for edge in polygon:
             newTri = Triangle(edge[0],edge[1],point)
             triangulation.add(newTri)
-        # print([tri.vertices for tri in triangulation])
+    
     return {
         tri for tri in triangulation
         if not any(vertex in superTriangle.vertices for vertex in tri.vertices)
     }
+    
