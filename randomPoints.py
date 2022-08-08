@@ -9,7 +9,7 @@ Both (1),(2),(4) use kd-tree
 """
 import random
 from kdtree import *
-
+# random.seed(1)
 def randomPoint(canvasBounds):
     x = random.randrange(0,canvasBounds[0])
     y = random.randrange(0,canvasBounds[1])
@@ -36,6 +36,6 @@ def genXYCoords(minMaxDist,numPoints,canvasBounds):
             res.append(candidate)
             pointTree.insertNode(candidate)
         counter += 1
-    printTree(pointTree.tree)
+    # printTree(pointTree.tree)
     return res
 

@@ -1,4 +1,6 @@
 """
+https://en.wikipedia.org/wiki/K-d_tree
+
 function kdtree (list of points pointList, int depth)
 {
     // Select axis based on depth so that axis cycles through all valid values
@@ -31,7 +33,7 @@ class kdTreeNode(object):
     def __repr__(self):
         return f"{self.value}"
 def buildkdTree(pointList,depth=0,dim=2):
-    #! made from psuedocode at start of file
+    #! largely based off of psuedocode at start of file
     if len(pointList) == 0:
         return kdTreeNode(None,depth)
     axis = depth%dim #axis is 0 or 1 (x,y respectively)
@@ -39,7 +41,6 @@ def buildkdTree(pointList,depth=0,dim=2):
     pointList.sort(key = lambda i : i[axis])
     medianIndex = len(pointList)//2
     median = pointList[medianIndex]
-    # print(pointList)
     return kdTreeNode(median,depth,
         buildkdTree(pointList[:medianIndex],depth+1),
         buildkdTree(pointList[medianIndex+1:],depth+1)

@@ -71,6 +71,14 @@ def convexHull(P_input):
     cmu divide and conquer algorithm requires the lower hull
     """
     return l_hull+u_hull
+    # return u_hull
+# def mergeSortedLists():
+    
+def boundary_Solve(polygon):
+    polygon.sort(key=lambda x : (-x[1],x[0]))
+
+    num_vertices = len(polygon)
+    cur_vertex = 0
 
 def delaunay(pointList,boundary):
     # if len(tmpHull)==1: #if there are less than or equal to 3 points
@@ -84,16 +92,14 @@ def delaunay(pointList,boundary):
     #left side loop
     left_inner = []
     left_hull = []
+    right_inner = []
+    right_hull = []
     for pt in pointList:
         if pt in boundary and pt < pointList[median]:
             left_hull.append(pt)
         elif pt < pointList[median]:
             left_inner.append(pt)
-    
-    right_inner = []
-    right_hull = []
-    for pt in pointList:
-        if pt in boundary and pt > pointList[median]:
+        elif pt in boundary and pt > pointList[median]:
             right_hull.append(pt)
         elif pt < pointList[median]:
             right_inner.append(pt)
