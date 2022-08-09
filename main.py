@@ -7,6 +7,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import collections as mc
 from delaunayTriangulation import *
+from dualGraph import *
 from bowyerWatson import *
 if __name__ == "__main__":
     """Goals:
@@ -27,13 +28,13 @@ if __name__ == "__main__":
 
     pointList = genXYCoords((10,100),numNodes,(width,height))
     triangles = BowyerWatson(pointList)
-    print(list(triangles)[0].edges)
     lines = [list(tri.edges) for tri in triangles]
     lines = [
         list(edgePair)
         for tri in triangles
         for edgePair in tri.edges
     ]
+    print(dualDelaunay(triangles))
     lineCol = mc.LineCollection(lines)
     _ , ax = plt.subplots()
     ax.add_collection(lineCol)

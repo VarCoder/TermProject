@@ -1,6 +1,7 @@
-import math
 from itertools import permutations
-from random import triangular
+from dualGraph import *
+import sys
+
 def orientation(a,b,c):
     #perform cross-product to find orientation of points
     ax,ay = a
@@ -13,6 +14,12 @@ def dist(point1,point2):
     y1 = point1[1]
     y2 = point2[1]
     return ((x2-x1)**2 + (y2-y1)**2)**0.5
+def midpoint(point1,point2):
+    return (((point1[0]+point2[0])/2),((point1[1]+point2[1])/2))
+def slope(point1,point2):
+    y_diff = (point2[1]-point1[1])
+    x_diff = (point2[0]-point1[0]+sys.float_info.epsilon)
+    return int(y_diff/x_diff)
 
 class Triangle(object):
     def __init__(self,a,b,c):
@@ -25,6 +32,8 @@ class Triangle(object):
                       (a,c)
                      ]
         self.vertices = frozenset([self.a,self.b,self.c])
+
+    
     def vertexSearch(self,point):
         return point in self.vertices
     def __eq__(self,other):
@@ -35,8 +44,9 @@ class Triangle(object):
     def __iter__(self):
         yield from self.edges
     def inCircumcircle(self,point):
-        #https://stackoverflow.com/questions/39984709/how-can-i-check-wether-a-point-is-inside-the-circumcircle-of-3-points
+        #! https://stackoverflow.com/questions/39984709/how-can-i-check-wether-a-point-is-inside-the-circumcircle-of-3-points
         for i in permutations([self.a,self.b,self.c]):
+            #test out variations to see if points are in ccw order
             if orientation(i[0],i[1],i[2]) > 0:
                 ax = i[0][0]-point[0]
                 ay = i[0][1]-point[1]
@@ -50,9 +60,9 @@ class Triangle(object):
                 return res>=0
         return False
 def BowyerWatson(pointList):
-    #implemented from https://en.wikipedia.org/wiki/Bowyer%E2%80%93Watson_algorithm
-    #https://stackoverflow.com/questions/58116412/a-bowyer-watson-delaunay-triangulation-i-implemented-doesnt-remove-the-triangle
-    #https://github.com/bl4ckb0ne/delaunay-triangulation/blob/master/dt/delaunay.cpp
+    #! implemented from https://en.wikipedia.org/wiki/Bowyer%E2%80%93Watson_algorithm
+    #! https://stackoverflow.com/questions/58116412/a-bowyer-watson-delaunay-triangulation-i-implemented-doesnt-remove-the-triangle
+    #! https://github.com/bl4ckb0ne/delaunay-triangulation/blob/master/dt/delaunay.cpp
     triangulation = set() #list of triangle objects
 
     minX = min(x[0] for x in pointList)
@@ -94,4 +104,3 @@ def BowyerWatson(pointList):
         tri for tri in triangulation
         if not any(vertex in superTriangle.vertices for vertex in tri.vertices)
     }
-    
