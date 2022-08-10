@@ -10,3 +10,5 @@ Timeline Plan:
     Finish geometry by end of week and spend 1-2 days doing the graph theory part of the problem
 Version Control Plan:
     I'm using GitHub to host and keep track of any changes of my project.
+TP2 Update:
+    I have graphics now, and I'm working on making the game show which path the user constructed
