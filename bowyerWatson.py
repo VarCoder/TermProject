@@ -1,6 +1,3 @@
-from itertools import permutations
-# from dualGraph import *
-import math
 import sys
 
 
@@ -10,7 +7,50 @@ def orientation(a, b, c):
     bx, by = b
     cx, cy = c
     return (bx-ax) * (cy-ay) - (by-ay) * (cx-ax)
+def lowerHull(P_input,removeLast=False,isSorted=True):
+    if not isSorted:
+        P_input = sorted(set(P_input),key=lambda x: (-x[1],x[0]))
+    lo_hull = []
+    for p in P_input:
+        while len(lo_hull) >= 2 and orientation(lo_hull[-2],lo_hull[-1],p)<=0:
+            lo_hull.pop()
+        lo_hull.append(p)
+    if removeLast:
+        return lo_hull[:-1]
+    else:
+        return lo_hull
 
+def upperHull(P_input,removeLast=False,isSorted=True):
+    if not isSorted:
+        P_input = sorted(set(P_input),key=lambda x: (-x[1],x[0]))
+    up_hull = []    
+    for p in reversed(P_input):
+        while len(up_hull) >= 2 and orientation(up_hull[-2],up_hull[-1],p)<=0:
+            up_hull.pop()
+        up_hull.append(p)
+    if removeLast:
+        return up_hull[:-1]
+    else:
+        return up_hull
+
+def convexHull(P_input):
+    """
+    P_input = list of Point objects
+    P_input is from the cmu notes
+    """
+    P_input = sorted(set(P_input),key=lambda x: (-x[1],x[0]))
+    n = len(P_input) #number of vertices
+    if n <= 1:
+        return P_input
+    # print(P_input)
+
+    l_hull = lowerHull(P_input,removeLast=True,isSorted=True)
+    u_hull = upperHull(P_input,removeLast=True,isSorted=True)
+    """
+    I return both the lower and upper hull because the 
+    cmu divide and conquer algorithm requires the lower hull
+    """
+    return l_hull+u_hull
 
 def dist(point1, point2):
     x1 = point1[0]
@@ -137,3 +177,15 @@ def BowyerWatson(pointList):
         tri for tri in triangulation
         if not any(vertex in superTriangle.vertices for vertex in tri.vertices)
     }
+def removeOuterEdges(triangles):
+    vertices = [
+        tuple(vertice)
+        for tri in triangles
+        for vertice in tri.vertices
+    ]
+    convex = convexHull(vertices)
+    triangles = {
+        tri for tri in triangles
+        if len((tri.vertices).intersection(convex)) == 0
+    }
+    return triangles

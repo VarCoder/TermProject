@@ -9,6 +9,7 @@ from matplotlib import collections as mc
 from delaunayTriangulation import *
 from dualGraph import *
 from bowyerWatson import *
+from hamiltonianPath import *
 if __name__ == "__main__":
     """Goals:
     perspective camera
@@ -20,11 +21,12 @@ if __name__ == "__main__":
     """
     width = 400
     height = 400
-    numNodes = 100
+    numNodes = 30
     random.seed()
-    G = Graph(numNodes)
-    G.initEdges()
-    G.createRandomEdges(3)
+    # G = Graph(numNodes)
+    # G.initEdges()
+    # G.createRandomEdges(3)
+    # print(G)
     # pointList = {(x,y) for x in range(0,400,20) for y in range(0,400,20)}
     # pointList=list(pointList)
     # print(pointList)
@@ -33,39 +35,21 @@ if __name__ == "__main__":
     # pointList.append((0,400))
     # pointList.append((400,0))
     # pointList.append((400,400))
+    
     triangles = BowyerWatson(pointList)
     
     centerLines = precompute(triangles)
     centerLines = [list(line) for line in centerLines]
     # lines = [list(tri.edges) for tri in tris]
     centers = [tri.circumCenter for tri in triangles]
-    vertices = [
-        tuple(vertice)
-        for tri in triangles
-        for vertice in tri.vertices
-    ]
-    convex = convexHull(vertices)
-    triangles = {
-        tri for tri in triangles
-        if len((tri.vertices).intersection(convex)) == 0
-    }
-    vertices = [
-        tuple(vertice)
-        for tri in triangles
-        for vertice in tri.vertices
-    ]
-    convex = convexHull(vertices)
-    triangles = {
-        tri for tri in triangles
-        if len((tri.vertices).intersection(convex)) == 0
-    }
-    
+    triangles = removeOuterEdges(triangles)
+    triangles = removeOuterEdges(triangles)
     lines = [
         list(edgePair)
         for tri in triangles
         for edgePair in tri.edges
     ]
-    
+    print(hamiltonianPath(getAdjList(triangles)))
     # # print(vertices)
     
     

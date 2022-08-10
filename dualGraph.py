@@ -6,6 +6,12 @@
 #       
 ############################################
 
+def almostEqual(d1, d2, epsilon=10**-7):
+    # note: use math.isclose() outside 15-112 with Python version 3.5 or later
+    return (abs(d2 - d1) < epsilon)
+def almostEqualPoint(point,point2):
+    return almostEqual(point[0],point2[0]) and almostEqual(point[1],point2[1])
+
 def precompute(triangles):
     # dict : key = frozen set of edge, value = set of circumcenters
     res = dict()
@@ -34,4 +40,31 @@ def precompute(triangles):
                 newEdgeList.add(frozenset([center1,center2]))
                 edgeAdj[center1] = (edgeAdj.get(center1,set())).union(center2)
     
-    return newEdgeList#,triangles
+    return newEdgeList
+
+def searchID(visited,targetVert):
+    for vertex,assocID in visited:
+        if almostEqualPoint(vertex,targetVert):
+            return assocID
+    return None
+
+
+def getAdjList(triangles):
+    visited = []
+    cnt = 0
+    adjList = []
+    for tri in triangles:
+        for edge in tri.edges:
+            newEdgeIds = []
+            for vertex in edge:
+                foundID = searchID(visited,vertex)
+                if foundID == None:
+                    visited.append((vertex,cnt))
+                    adjList.append(set())
+                    foundID = cnt
+                    cnt+=1
+                newEdgeIds.append(foundID)
+            [src,dst] = newEdgeIds
+            adjList[src].add(dst)
+            adjList[dst].add(src)
+    return adjList
