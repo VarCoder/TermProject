@@ -25,7 +25,7 @@ if __name__ == "__main__":
     G = Graph(numNodes)
     G.initEdges()
     G.createRandomEdges(3)
-    # pointList = {(x,y) for x in range(0,400,10) for y in range(0,400,10)}
+    # pointList = {(x,y) for x in range(0,400,20) for y in range(0,400,20)}
     # pointList=list(pointList)
     # print(pointList)
     pointList = genXYCoords((30,80),numNodes,(width,height))
@@ -49,6 +49,17 @@ if __name__ == "__main__":
         tri for tri in triangles
         if len((tri.vertices).intersection(convex)) == 0
     }
+    vertices = [
+        tuple(vertice)
+        for tri in triangles
+        for vertice in tri.vertices
+    ]
+    convex = convexHull(vertices)
+    triangles = {
+        tri for tri in triangles
+        if len((tri.vertices).intersection(convex)) == 0
+    }
+    
     lines = [
         list(edgePair)
         for tri in triangles
