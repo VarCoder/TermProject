@@ -3,12 +3,11 @@ from graph import *
 from kdtree import *
 from randomPoints import *
 
-# from matplotlib import pyplot as plt
-# from matplotlib import collections as mc
 from delaunayTriangulation import *
 from dualGraph import *
 from bowyerWatson import *
 from hamiltonianPath import *
+
 def generateLevel(numNodes,width,height):
 
     #do-while loop doesn't exist in python
@@ -16,10 +15,12 @@ def generateLevel(numNodes,width,height):
     triangles = BowyerWatson(pointList)
     
     centerLines,ej = precompute(triangles)
+    # centerLines = removeOuterSites(centerLines)
     centerLines = [list(line) for line in centerLines]
 
     triangles = removeOuterEdges(triangles)
     triangles = removeOuterEdges(triangles)
+
     while not hamiltonianPath(getAdjList(triangles)):
         pointList = genXYCoords((30,80),numNodes,(width,height))
         
@@ -37,7 +38,9 @@ def appStarted(app):
     app.delVerts = { vert for tri in app.level for vert in tri.vertices }
     app.voronoiVerts = { vert for edge in app.cells for vert in edge }
     app.curpath = []
+    app.prevPaths = []
     app.win = 0
+
 def mousePressed(app,event):
     location = (event.x, event.y)
     def distance(a, b):
@@ -65,7 +68,9 @@ def mousePressed(app,event):
         app.curpath = app.curpath[:ind]
     
     if len(app.curpath) == len(app.delVerts):
-        app.win += 1
+        if app.curpath not in app.prevPaths:
+            app.win += 1
+            app.prevPaths.append(app.curpath)
         app.curpath = []
     # test = app.mouseTree.findNeighbor((event.x,event.y))
     # print(test[0].value)
@@ -76,22 +81,32 @@ def mousePressed(app,event):
     #     # else:
     #         # print("...")
 def drawCells(app,canvas):
-    for cell in app.cells:
+    for cell_ in app.cells:
+        cell = [[0,0],[0,0]]
+        cell[0][0] = min(max(cell_[0][0],0),app.width)
+        cell[0][1] = min(max(cell_[0][1],0),app.height)
+        cell[1][0] = min(max(cell_[1][0],0),app.width)
+        cell[1][1] = min(max(cell_[1][1],0),app.height)
         canvas.create_line(cell[0][0],cell[0][1],cell[1][0],cell[1][1],fill="black",width=3)
 def drawTriangles(app,canvas):
     for triangle in app.level:
         for edge in triangle.edges:
-            canvas.create_line(edge[0][0],edge[0][1],edge[1][0],edge[1][1],fill="red",width=3)
+            edge[1][0],edge[1][1]
+            canvas.create_oval(edge[0][0]-5,edge[0][1]-5,edge[0][0]+5,edge[0][1]+5,fill="red",width=3)
+            canvas.create_oval(edge[1][0]-5,edge[1][1]-5,edge[1][0]+5,edge[1][1]+5,fill="red",width=3)
 def drawPath(app,canvas):
-    
     for ind in range(len(app.curpath)):
         point = app.curpath[ind]
-        print(point,point[0])
-        canvas.create_text(point[0],point[1],text=str(ind))
+        # print(point,point[0])
+        canvas.create_text(point[0]+7,point[1]+7,text=str(ind))
+def drawWin(app,canvas):
+    canvas.create_text(0,0,anchor="nw",text=f"You have won {app.win} times" if app.win != 1 else f"You have won once")
+
 def redrawAll(app,canvas):
     drawCells(app,canvas)
     drawTriangles(app,canvas)
     drawPath(app,canvas)
+    drawWin(app,canvas)
 def main():
     runApp(width=450,height=450)
 if __name__ == "__main__":

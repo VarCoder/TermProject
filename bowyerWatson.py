@@ -189,3 +189,16 @@ def removeOuterEdges(triangles):
         if len((tri.vertices).intersection(convex)) == 0
     }
     return triangles
+
+def removeOuterSites(voronoi):
+    vertices = {
+        tuple(vertice)
+        for edge in voronoi
+        for vertice in edge
+    }
+    convex = convexHull(vertices)
+    voronoi = {
+        edge for edge in voronoi
+        if not any(vert in convex for vert in edge)
+    }
+    return voronoi
