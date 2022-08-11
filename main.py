@@ -34,14 +34,20 @@ def generateLevel(numNodes,width,height):
     return triangles,centerLines,ej
 
 def appStarted(app):
-    app.level, app.cells, app.edgeAdj = generateLevel(27,app.width,app.height)
+    app.level, app.cells, app.edgeAdj = generateLevel(33,app.width,app.height)
     app.delVerts = { vert for tri in app.level for vert in tri.vertices }
     app.voronoiVerts = { vert for edge in app.cells for vert in edge }
     app.curpath = []
+    app.badRun = False
     app.prevPaths = []
     app.win = 0
-
+    app.gameOver = False
+def keyPressed(app,event):
+    if event.key == "r":
+        appStarted(app)
 def mousePressed(app,event):
+    if app.gameOver: return
+    app.badRun = False
     location = (event.x, event.y)
     def distance(a, b):
         # print('in distance: a =', a)
@@ -68,9 +74,12 @@ def mousePressed(app,event):
         app.curpath = app.curpath[:ind]
     
     if len(app.curpath) == len(app.delVerts):
+        
         if app.curpath not in app.prevPaths:
             app.win += 1
             app.prevPaths.append(app.curpath)
+        else:
+            app.badRun = True
         app.curpath = []
     # test = app.mouseTree.findNeighbor((event.x,event.y))
     # print(test[0].value)
@@ -81,6 +90,8 @@ def mousePressed(app,event):
     #     # else:
     #         # print("...")
 def drawCells(app,canvas):
+    width = 400
+    height = 400
     for cell_ in app.cells:
         cell = [[0,0],[0,0]]
         cell[0][0] = min(max(cell_[0][0],0),app.width)
@@ -100,13 +111,23 @@ def drawPath(app,canvas):
         # print(point,point[0])
         canvas.create_text(point[0]+7,point[1]+7,text=str(ind))
 def drawWin(app,canvas):
-    canvas.create_text(0,0,anchor="nw",text=f"You have won {app.win} times" if app.win != 1 else f"You have won once")
+    if app.badRun:
+        text = "Make a path you haven't made before"
+    else:
+        text = f"You have won {app.win} times" if app.win != 1 else f"You have won once"
+    canvas.create_text(0,0,anchor="nw",text=text)
+def drawGameEnd(app,canvas):
+    canvas.create_text(app.width/2,app.height/2,text="Congrats, you have won the game!",font = "Helvetica 11 bold")
 
 def redrawAll(app,canvas):
+    if app.win == len(app.delVerts):
+        app.gameOver = True
+        drawGameEnd(app,canvas)
     drawCells(app,canvas)
     drawTriangles(app,canvas)
     drawPath(app,canvas)
     drawWin(app,canvas)
+    
 def main():
     runApp(width=450,height=450)
 if __name__ == "__main__":
