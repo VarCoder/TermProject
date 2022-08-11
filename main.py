@@ -42,6 +42,7 @@ def appStarted(app):
     app.win = 0
     app.gameOver = False
     app.help = False
+    app.title= True
     # app.cityImage = app.loadImage('https://www.pinterest.com/pin/608971180850708564/')
     # app.cityImage = app.scaleImage
 def keyPressed(app,event):
@@ -51,6 +52,8 @@ def keyPressed(app,event):
         app.gameOver = True
     if event.key == "i":
         app.help = not app.help
+    if event.key == "Space":
+        app.title = False
 def mousePressed(app,event):
     if app.gameOver: return
     app.badRun = False
@@ -108,6 +111,7 @@ def drawCells(app,canvas):
         cell[0][1] = min(max(cell_[0][1],20),app.height)
         cell[1][0] = min(max(cell_[1][0],20),app.width)
         cell[1][1] = min(max(cell_[1][1],20),app.height)
+        
         canvas.create_line(cell[0][0],cell[0][1],cell[1][0],cell[1][1],fill="black",width=3)
 def drawTriangles(app,canvas):
     for triangle in app.level:
@@ -137,13 +141,18 @@ def drawHelp(app,canvas):
     canvas.create_text(app.width/2, app.height/2 + 40, text="When you construct a path, you may not traverse over the same dot more than once!",font = "Helvetica 8",anchor="center")
     canvas.create_text(app.width/2, app.height/2 + 60, text="You can delete the path by clicking on a node again, and you may not construct the same path twice",font = "Helvetica 8",anchor="center")
     canvas.create_text(app.width/2, app.height/2 + 80, text="The winning-condition of the game is to draw as many paths as there are dots, good luck!",font = "Helvetica 8",anchor="center")
-    
-
+def drawTitle(app,canvas):
+    canvas.create_text(app.width/2,app.height/2,text="The Travelling Salesman Game",font="Rockwell 20")
+    canvas.create_text(app.width/2, app.height/2 + 40, text="Press Space to Play!",font = "Helvetica 12")
+    canvas.create_text(app.width/2,app.height/2 + 60, text = "Press I to toggle the Information/Help Screen!", font="Helvetica 10")
 def redrawAll(app,canvas):
+    drawBackground(app,canvas)
     if app.help:
         drawHelp(app,canvas)
+    elif app.title:
+        drawTitle(app,canvas)
     else:
-        drawBackground(app,canvas)
+        
         drawCells(app,canvas)
         drawTriangles(app,canvas)
         drawPath(app,canvas)
