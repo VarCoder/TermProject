@@ -7,6 +7,7 @@ from delaunayTriangulation import *
 from dualGraph import *
 from bowyerWatson import *
 from hamiltonianPath import *
+random.seed(2)
 def generateLevel(numNodes,width,height):
 
     #do-while loop doesn't exist in python
@@ -33,7 +34,7 @@ def generateLevel(numNodes,width,height):
     return triangles,centerLines,ej
 
 def appStarted(app):
-    app.level, app.cells, app.edgeAdj = generateLevel(30,app.width,app.height)
+    app.level, app.cells, app.edgeAdj = generateLevel(25,app.width,app.height)
     app.delVerts = { vert for tri in app.level for vert in tri.vertices }
     app.voronoiVerts = { vert for edge in app.cells for vert in edge }
     app.curpath = []
@@ -43,6 +44,10 @@ def appStarted(app):
     app.gameOver = False
     app.help = False
     app.title= True
+    app.maxTime = 20
+    app.time = 0
+    app.liveGame = False
+    app.lostGame = False
     # app.cityImage = app.loadImage('https://www.pinterest.com/pin/608971180850708564/')
     # app.cityImage = app.scaleImage
 def keyPressed(app,event):
@@ -52,8 +57,29 @@ def keyPressed(app,event):
         app.gameOver = True
     if event.key == "i":
         app.help = not app.help
+        if not app.help:
+            app.liveGame = True
     if event.key == "Space":
         app.title = False
+        app.liveGame = True
+    if app.title and event.key == "1":
+        app.title = False
+        app.maxTime = 10
+        app.level, app.cells, app.edgeAdj = generateLevel(15,app.width,app.height)
+        app.delVerts = { vert for tri in app.level for vert in tri.vertices }
+        app.voronoiVerts = { vert for edge in app.cells for vert in edge }
+    if app.title and event.key == "2":
+        app.title = False
+        app.maxTime = 20
+        app.level, app.cells, app.edgeAdj = generateLevel(25,app.width,app.height)
+        app.delVerts = { vert for tri in app.level for vert in tri.vertices }
+        app.voronoiVerts = { vert for edge in app.cells for vert in edge }
+    if app.title and event.key == "3":
+        app.title = False
+        app.maxTime = 40
+        app.level, app.cells, app.edgeAdj = generateLevel(32,app.width,app.height)
+        app.delVerts = { vert for tri in app.level for vert in tri.vertices }
+        app.voronoiVerts = { vert for edge in app.cells for vert in edge }
 def mousePressed(app,event):
     if app.gameOver: return
     app.badRun = False
@@ -102,8 +128,18 @@ def mousePressed(app,event):
     #         print(app.edgeAdj[point])
     #     # else:
     #         # print("...")
+def timerFired(app):
+    if app.win == len(app.delVerts) or app.gameOver:
+        app.gameOver = True
+    if app.liveGame and not app.gameOver:
+        app.time += app.timerDelay/1000
+        print(app.time)
+        if app.time >= app.maxTime:
+            app.lostGame = True
+            app.gameOver = True   
+            app.liveGame = False
 def drawCells(app,canvas):
-
+    # canvas.create_polygon(*app.cells,fill="black",width=3)
     for cell_ in app.cells:
         # cell = cell_
         cell = [[0,0],[0,0]]
@@ -111,7 +147,7 @@ def drawCells(app,canvas):
         cell[0][1] = min(max(cell_[0][1],20),app.height)
         cell[1][0] = min(max(cell_[1][0],20),app.width)
         cell[1][1] = min(max(cell_[1][1],20),app.height)
-        
+
         canvas.create_line(cell[0][0],cell[0][1],cell[1][0],cell[1][1],fill="black",width=3)
 def drawTriangles(app,canvas):
     for triangle in app.level:
@@ -125,6 +161,8 @@ def drawPath(app,canvas):
         point = app.curpath[ind]
         # print(point,point[0])
         canvas.create_text(point[0]+7,point[1]+7,text=str(ind),fill="green",font="Helvetica 9 bold")
+        if ind > 0:
+            canvas.create_line(app.curpath[ind][0],app.curpath[ind][1],app.curpath[ind-1][0],app.curpath[ind-1][1],fill="red",width=3)
 def drawWin(app,canvas):
     if app.badRun:
         text = "Make a path you haven't made before"
@@ -132,12 +170,15 @@ def drawWin(app,canvas):
         text = f"You have won {app.win} times" if app.win != 1 else f"You have won once"
     canvas.create_text(0,0,anchor="nw",text=text,font = "Helvetica 11 bold")
 def drawGameEnd(app,canvas):
-    canvas.create_text(app.width/2,app.height/2,text="Congrats, you have won the game!",font = "Helvetica 11 bold")
+    if app.lostGame:
+        canvas.create_text(app.width/2,app.height/2,text="You lost :(, Try again by pressing r!",font = "Helvetica 11 bold")
+    else:
+        canvas.create_text(app.width/2,app.height/2,text="Congrats, you have won the game!",font = "Helvetica 11 bold")
 def drawBackground(app,canvas):
     canvas.create_rectangle(0,20,app.width,app.height,fill="#1338BE")
 def drawHelp(app,canvas):
     canvas.create_text(app.width/2,app.height/2,text="This is the Travelling Salesman Game!",font = "Helvetica 9 bold")
-    canvas.create_text(app.width/2, app.height/2 + 20, text="The rules are to click on the red dots and construct a path that goes through every dot once",font = "Helvetica 8",anchor="center")
+    canvas.create_text(app.width/2, app.height/2 + 20, text="The rules are to click on the red dots and construct a path that goes through every dot once.",font = "Helvetica 8",anchor="center")
     canvas.create_text(app.width/2, app.height/2 + 40, text="When you construct a path, you may not traverse over the same dot more than once!",font = "Helvetica 8",anchor="center")
     canvas.create_text(app.width/2, app.height/2 + 60, text="You can delete the path by clicking on a node again, and you may not construct the same path twice",font = "Helvetica 8",anchor="center")
     canvas.create_text(app.width/2, app.height/2 + 80, text="The winning-condition of the game is to draw as many paths as there are dots, good luck!",font = "Helvetica 8",anchor="center")
@@ -145,21 +186,24 @@ def drawTitle(app,canvas):
     canvas.create_text(app.width/2,app.height/2,text="The Travelling Salesman Game",font="Rockwell 20")
     canvas.create_text(app.width/2, app.height/2 + 40, text="Press Space to Play!",font = "Helvetica 12")
     canvas.create_text(app.width/2,app.height/2 + 60, text = "Press I to toggle the Information/Help Screen!", font="Helvetica 10")
+    canvas.create_text(app.width/2,app.height-10,text="Difficulty: Press 1 for Easy, 2 for Medium, and 3 for Hard",font="Helvetica 13",anchor="s")
+def drawTime(app,canvas):
+    canvas.create_text(app.width-10,0,text=f"Time: {app.time:.2f}",font="Helvetica 9",anchor="ne")    
 def redrawAll(app,canvas):
     drawBackground(app,canvas)
     if app.help:
         drawHelp(app,canvas)
     elif app.title:
         drawTitle(app,canvas)
+    elif app.win == len(app.delVerts) or app.gameOver:
+        drawGameEnd(app,canvas)
     else:
         
         drawCells(app,canvas)
         drawTriangles(app,canvas)
         drawPath(app,canvas)
         drawWin(app,canvas)
-        if app.win == len(app.delVerts) or app.gameOver:
-            app.gameOver = True
-            drawGameEnd(app,canvas)
+        drawTime(app,canvas)
     
 def main():
     runApp(width=600,height=600)
