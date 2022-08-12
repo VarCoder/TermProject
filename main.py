@@ -44,7 +44,7 @@ def appStarted(app):
     app.gameOver = False
     app.help = False
     app.title= True
-    app.maxTime = 20
+    app.maxTime = 40
     app.time = 0
     app.liveGame = False
     app.lostGame = False
@@ -57,26 +57,27 @@ def keyPressed(app,event):
         app.gameOver = True
     if event.key == "i":
         app.help = not app.help
-        if not app.help:
-            app.liveGame = True
     if event.key == "Space":
         app.title = False
         app.liveGame = True
     if app.title and event.key == "1":
         app.title = False
-        app.maxTime = 10
+        app.liveGame = True
+        app.maxTime = 25
         app.level, app.cells, app.edgeAdj = generateLevel(15,app.width,app.height)
         app.delVerts = { vert for tri in app.level for vert in tri.vertices }
         app.voronoiVerts = { vert for edge in app.cells for vert in edge }
     if app.title and event.key == "2":
         app.title = False
-        app.maxTime = 20
+        app.liveGame = True
+        app.maxTime = 40
         app.level, app.cells, app.edgeAdj = generateLevel(25,app.width,app.height)
         app.delVerts = { vert for tri in app.level for vert in tri.vertices }
         app.voronoiVerts = { vert for edge in app.cells for vert in edge }
     if app.title and event.key == "3":
         app.title = False
-        app.maxTime = 40
+        app.liveGame = True
+        app.maxTime = 70
         app.level, app.cells, app.edgeAdj = generateLevel(32,app.width,app.height)
         app.delVerts = { vert for tri in app.level for vert in tri.vertices }
         app.voronoiVerts = { vert for edge in app.cells for vert in edge }
@@ -129,11 +130,12 @@ def mousePressed(app,event):
     #     # else:
     #         # print("...")
 def timerFired(app):
+    if app.title or app.help: return
     if app.win == len(app.delVerts) or app.gameOver:
         app.gameOver = True
     if app.liveGame and not app.gameOver:
         app.time += app.timerDelay/1000
-        print(app.time)
+        # print(app.time)
         if app.time >= app.maxTime:
             app.lostGame = True
             app.gameOver = True   
@@ -186,9 +188,9 @@ def drawTitle(app,canvas):
     canvas.create_text(app.width/2,app.height/2,text="The Travelling Salesman Game",font="Rockwell 20")
     canvas.create_text(app.width/2, app.height/2 + 40, text="Press Space to Play!",font = "Helvetica 12")
     canvas.create_text(app.width/2,app.height/2 + 60, text = "Press I to toggle the Information/Help Screen!", font="Helvetica 10")
-    canvas.create_text(app.width/2,app.height-10,text="Difficulty: Press 1 for Easy, 2 for Medium, and 3 for Hard",font="Helvetica 13",anchor="s")
+    canvas.create_text(app.width/2,app.height-10,text="Difficulty: Press 1 for Easy, 2 for Medium, and 3 for Hard",font="Helvetica 12",anchor="s")
 def drawTime(app,canvas):
-    canvas.create_text(app.width-10,0,text=f"Time: {app.time:.2f}",font="Helvetica 9",anchor="ne")    
+    canvas.create_text(app.width-10,0,text=f"Time: {app.time:.2f}",font="Rockwell 9",anchor="ne")    
 def redrawAll(app,canvas):
     drawBackground(app,canvas)
     if app.help:
